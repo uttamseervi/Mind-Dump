@@ -1,4 +1,3 @@
-'use client'
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -14,7 +13,7 @@ import { PostActions } from '@/components/post-actions';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user) {
     redirect('/api/auth/signin');
   }
