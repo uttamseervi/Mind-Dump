@@ -1,68 +1,90 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { format } from 'date-fns';
+'use client';
 
-import { db } from '@/lib/db';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { BlogPostCard } from '@/components/blog-post-card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function BlogPage() {
-  const posts = await db.post.findMany({
-    where: { published: true },
-    include: { author: true },
-    orderBy: { createdAt: 'desc' },
-  });
+export default function BlogFeed() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const postsPerPage = 6;
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        const skip = (page - 1) * postsPerPage;
+        const response = await fetch(`/api/posts?skip=${skip}&take=${postsPerPage}`);
+        const data = await response.json();
+        
+        if (page === 1) {
+          setPosts(data.posts);
+        } else {
+          setPosts(prevPosts => [...prevPosts, ...data.posts]);
+        }
+        
+        setHasMore(data.posts.length === postsPerPage);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [page]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-foreground">Blog Posts</h1>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <Card key={post.id} className="flex flex-col overflow-hidden bg-card text-foreground">
-            {post.image && (
-              <div className="relative h-48 w-full">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                />
-              </div>
+    <section className="py-16">
+      <div className="container px-4 mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-3xl font-bold mb-2">Latest Posts</h2>
+          <p className="text-muted-foreground mb-10">Explore all our articles</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts?.map((post) => (
+              <BlogPostCard key={post.id} post={post} />
+            ))}
+            
+            {isLoading && page === 1 && (
+              Array(postsPerPage).fill(0).map((_, index) => (
+                <div key={index} className="space-y-4">
+                  <Skeleton className="h-48 rounded-lg" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              ))
             )}
-
-            <CardHeader>
-              <CardTitle className="text-xl line-clamp-2">{post.title}</CardTitle>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={post.author.image || ''} alt={post.author.name || ''} />
-                  <AvatarFallback>{post.author.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <span>{post.author.name || 'Anonymous'}</span>
-                <span>•</span>
-                <span>{format(new Date(post.createdAt), 'MMM d, yyyy')}</span>
-              </div>
-            </CardHeader>
-
-            <CardContent className="mt-auto">
-              <Badge variant="secondary" className="mb-4">
-                {post.category}
-              </Badge>
-            </CardContent>
-
-            <CardFooter className="mt-auto">
-              <Link
-                href={`/blog/${post.slug}`}
-                className="text-sm font-medium text-primary hover:underline"
+          </div>
+          
+          {posts?.length > 0 && hasMore && (
+            <div className="flex justify-center mt-12">
+              <Button 
+                variant="outline" 
+                onClick={() => setPage(prevPage => prevPage + 1)}
+                disabled={isLoading}
               >
-                Read more →
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+                {isLoading ? 'Loading...' : 'Load More'}
+              </Button>
+            </div>
+          )}
+          
+          {posts?.length === 0 && !isLoading && (
+            <p className="text-center text-muted-foreground">
+              No posts found. Check back later or try a different filter.
+            </p>
+          )}
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }
