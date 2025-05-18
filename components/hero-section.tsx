@@ -23,9 +23,9 @@ export function HeroSection() {
               Or share your own ideas with the world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <Button size="lg" asChild>
+              {/* <Button size="lg" asChild>
                 <Link href="/write">Get Started</Link>
-              </Button>
+              </Button> */}
               <Button size="lg" variant="outline" asChild>
                 <Link href="/blog">Explore Posts</Link>
               </Button>

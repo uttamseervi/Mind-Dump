@@ -48,19 +48,19 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
   const [category, setCategory] = useState(defaultValues?.category || '');
   const [tags, setTags] = useState<string[]>(defaultValues?.tags || []);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  // const [imageUrl, setImageUrl] = useState('');
   const [imageError, setImageError] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<any>(null);
 
-  const handleUploadImage = async (file: File) => {
-    try {
-      const fakeUploadedUrl = 'https://images.pexels.com/photos/262508/pexels-photo-262508.jpeg';
-      setImage(fakeUploadedUrl);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    }
-  };
+  // const handleUploadImage = async (file: File) => {
+  //   try {
+  //     const fakeUploadedUrl = 'https://images.pexels.com/photos/262508/pexels-photo-262508.jpeg';
+  //     setImage(fakeUploadedUrl);
+  //   } catch (error) {
+  //     console.error('Error uploading image:', error);
+  //   }
+  // };
 
   const handleSubmit = (isDraft: boolean) => {
     const content = editorRef.current?.getContent();
@@ -71,24 +71,12 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
     onSubmit({
       title,
       content,
-      image,
       category,
       tags,
     }, isDraft);
   };
 
-  const handleImageInsert = () => {
-    if (!imageUrl) {
-      setImageError('Please enter a valid image URL');
-      return;
-    }
-    if (editorRef.current) {
-      editorRef.current.insertContent(`<img src="${imageUrl}" alt="Inserted Image" />`);
-      setImageUrl('');
-      setImageError('');
-      setIsImageDialogOpen(false);
-    }
-  };
+ 
 
   return (
     <motion.div
@@ -135,47 +123,6 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
           />
         </div>
 
-        <div>
-          <Label htmlFor="featured-image">Featured Image</Label>
-          <div className="flex items-center gap-4 mt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => imageInputRef.current?.click()}
-            >
-              Upload Image
-            </Button>
-            <input
-              ref={imageInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleUploadImage(e.target.files[0]);
-                }
-              }}
-            />
-            {image && (
-              <div className="relative">
-                <img
-                  src={image}
-                  alt="Featured"
-                  className="h-16 w-16 object-cover rounded"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="absolute -top-2 -right-2 h-6 w-6"
-                  onClick={() => setImage('')}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
       <div className="border rounded-lg overflow-hidden">
@@ -231,7 +178,7 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
         </Button>
       </div>
 
-      <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
+      {/* <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Insert Image</DialogTitle>
@@ -257,7 +204,7 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
             <Button onClick={handleImageInsert}>Insert</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </motion.div>
   );
 }

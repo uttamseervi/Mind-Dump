@@ -1,3 +1,4 @@
+'use client'
 import { BlogFeed } from '@/components/blog-feed';
 import { FeaturedPosts } from '@/components/featured-posts';
 import { HeroSection } from '@/components/hero-section';
@@ -9,7 +10,7 @@ export default function Home() {
       <HeroSection />
       <SearchSection />
       <FeaturedPosts />
-      <BlogFeed />
+      {/* <BlogFeed /> */}
     </div>
   );
 }

@@ -28,8 +28,8 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
     >
       <Link href={`/blog/${post.slug}`}>
         <Card className="overflow-hidden h-full flex flex-col">
-          <div className="relative h-48 w-full">
-            {post.image ? (
+          <div className="relative h-5 w-full">
+            {/* {post.image ? (
               <Image
                 src={post.image}
                 alt={post.title}
@@ -43,7 +43,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               <div className="h-full w-full bg-muted flex items-center justify-center">
                 <p className="text-muted-foreground">No image available</p>
               </div>
-            )}
+            )} */}
             <div className="absolute top-2 left-2">
               <Badge>{post.category}</Badge>
             </div>

@@ -1,8 +1,20 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthOptions, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { compare } from 'bcrypt';
-
+import { compare } from 'bcryptjs';
 import { db } from '@/lib/db';
+
+// Extend the Session type to include user.id
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
 
 export const authOptions: NextAuthOptions = {
   providers: [

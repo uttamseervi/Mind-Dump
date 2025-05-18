@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,17 +11,43 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getInitials } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
   const router = useRouter();
+
+  // Local states for form inputs
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(session?.user?.name || '');
+  const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState(session?.user?.image || '');
+  const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Initialize form fields when session data is loaded
+  useEffect(() => {
+    if (session?.user) {
+      setName(session.user.name || '');
+      setImage(session.user.image || '');
+      // If you have bio from session or fetch it separately, set it here
+      setBio(''); // Replace with actual bio if available
+    }
+  }, [session]);
+
+  // Redirect to login if no session (once status is known)
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  // Show nothing or a loader while loading session
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  // If no session at this point, redirect will happen, so don't render page
   if (!session?.user) {
-    router.push('/login');
     return null;
   }
 
@@ -58,6 +84,7 @@ export default function ProfilePage() {
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
+      // You could add user-facing error handling here
     } finally {
       setIsLoading(false);
     }
@@ -91,12 +118,7 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={session.user.email || ''}
-                disabled
-              />
+              <Input id="email" type="email" value={session.user.email || ''} disabled />
             </div>
 
             <div className="space-y-2">

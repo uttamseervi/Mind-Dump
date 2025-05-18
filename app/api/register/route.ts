@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'; // Ensure dynamic rendering
 
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import slugify from 'slugify';
 import { db } from '@/lib/db';
 

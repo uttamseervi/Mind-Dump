@@ -1,3 +1,4 @@
+'use client'
 import { notFound } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,7 +8,7 @@ import { db } from '@/lib/db';
 import { MotionDiv } from '@/components/motion-div';
 
 interface AuthorProfilePageProps {
-  params: { username: string };
+  params: { id: string };
 }
 
 export default async function AuthorProfilePage({ params }: AuthorProfilePageProps) {
