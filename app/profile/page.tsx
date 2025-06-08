@@ -29,8 +29,7 @@ export default function ProfilePage() {
     if (session?.user) {
       setName(session.user.name || '');
       setImage(session.user.image || '');
-      // If you have bio from session or fetch it separately, set it here
-      setBio(''); // Replace with actual bio if available
+      setBio(session.user.bio || '');
     }
   }, [session]);
 
@@ -78,6 +77,7 @@ export default function ProfilePage() {
           ...session.user,
           name,
           image,
+          bio,
         },
       });
 

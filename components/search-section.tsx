@@ -9,38 +9,30 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { categories } from '@/data/categories';
 
-export function SearchSection() {
-  const router = useRouter();
+interface SearchSectionProps {
+  onSearch: (query: string) => void;
+  onCategorySelect: (category: string | null) => void;
+  selectedCategory: string | null;
+}
+
+export function SearchSection({ onSearch, onCategorySelect, selectedCategory }: SearchSectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const params = new URLSearchParams();
-    
-    if (searchQuery) {
-      params.set('query', searchQuery);
-    }
-    
-    if (selectedCategory) {
-      params.set('category', selectedCategory);
-    }
-    
-    router.push(`/blog?${params.toString()}`);
+    onSearch(searchQuery);
   };
 
   const handleCategoryClick = (category: string) => {
     if (selectedCategory === category) {
-      setSelectedCategory(null);
+      onCategorySelect(null);
     } else {
-      setSelectedCategory(category);
-      router.push(`/blog?category=${encodeURIComponent(category)}`);
+      onCategorySelect(category);
     }
   };
 
   return (
-    <section className="py-8">
+    <section className="py-2">
       <div className="container px-4 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -60,15 +52,14 @@ export function SearchSection() {
             </div>
             <Button type="submit">Search</Button>
           </form>
-          
+
           <div>
             <h3 className="text-sm font-medium mb-3">Popular Categories</h3>
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Badge
                   key={category.value}
-                  variant={selectedCategory === category.value ? 'default' : 'outline'}
-                  className="cursor-pointer"
+                  className={`cursor-pointer ${selectedCategory === category.value ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
                   onClick={() => handleCategoryClick(category.value)}
                 >
                   {category.label}
