@@ -61,6 +61,44 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
         },
       },
+      typography: ({ theme }: any) => ({
+        DEFAULT: {
+          css: {
+            code: {
+              backgroundColor: theme('colors.gray.100'),
+              color: theme('colors.gray.800'),
+              borderRadius: theme('borderRadius.sm'),
+              padding: '0.2em 0.4em',
+              fontWeight: 'normal',
+            },
+            'code::before': {
+              content: ''
+            },
+            'code::after': {
+              content: ''
+            },
+            pre: {
+              backgroundColor: theme('colors.gray.100'),
+              color: theme('colors.gray.800'),
+              borderRadius: theme('borderRadius.md'),
+              padding: theme('spacing.4'),
+              overflowX: 'auto',
+            },
+          },
+        },
+        invert: {
+          css: {
+            code: {
+              backgroundColor: theme('colors.gray.700'),
+              color: theme('colors.gray.100'),
+            },
+            pre: {
+              backgroundColor: theme('colors.gray.900'),
+              color: theme('colors.gray.100'),
+            },
+          },
+        },
+      }),
       keyframes: {
         'accordion-down': {
           from: {

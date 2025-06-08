@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const postId = searchParams.get('postId');
-        console.log("postid", postId)
+        // console.log("postid", postId)
         if (!postId) {
             return NextResponse.json({ error: 'Missing postId' }, { status: 400 });
         }

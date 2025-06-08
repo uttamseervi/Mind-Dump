@@ -18,7 +18,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     const fetchPost = async () => {
       try {
         const response = await fetch(`/api/posts/${params.id}`);
-        console.log("the post response is ", response)
+        // console.log("the post response is ", response)
         if (!response.ok) {
           throw new Error('Failed to fetch post');
         }
