@@ -90,36 +90,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Content Section */}
       <Card className='p-4 m-2'>
         <CardContent>
-          <div
-            className="prose prose-lg dark:prose-invert max-w-none"
+          <article
+            className="prose prose-lg dark:prose-invert max-w-none [&_*]:!text-foreground [&_*]:!text-base [&_h1]:!text-4xl [&_h2]:!text-3xl [&_h3]:!text-2xl [&_h4]:!text-xl [&_p]:!my-4 [&_ul]:!my-4 [&_ol]:!my-4 [&_li]:!my-2 [&_a]:!text-blue-500 [&_a]:!no-underline hover:[&_a]:!underline [&_img]:!rounded-lg [&_img]:!my-4 [&_blockquote]:!border-l-4 [&_blockquote]:!border-gray-300 [&_blockquote]:!pl-4 [&_blockquote]:!italic [&_code]:!bg-gray-100 dark:[&_code]:!bg-black dark:[&_code]:!text-white [&_code]:!px-2 [&_code]:!py-1 [&_code]:!rounded [&_pre]:!bg-gray-100 dark:[&_pre]:!bg-black dark:[&_pre]:!text-white [&_pre]:!p-4 [&_pre]:!rounded-lg [&_pre]:!overflow-x-auto [&_strong]:!font-bold [&_em]:!italic [&_ul]:!list-disc [&_ul]:!pl-6 [&_ol]:!list-decimal [&_ol]:!pl-6 [&_h3]:!mt-8 [&_h3]:!mb-4 [&_h4]:!mt-6 [&_h4]:!mb-3 [&_ul]:!space-y-2 [&_ol]:!space-y-2 [&_li]:!leading-relaxed"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </CardContent>
       </Card>
+
+      {/* Author Section */}
+      <Card className="bg-muted/20">
+        <CardHeader>
+          <CardTitle>About the Author</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-start gap-4">
+          <Avatar className="w-16 h-16">
+            <AvatarImage src={post.author.image || ''} alt={post.author.name || ''} />
+            <AvatarFallback className="text-xl">{post.author.name?.charAt(0) || 'U'}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h3 className="font-medium text-lg">{post.author.name}</h3>
+            <p className="text-muted-foreground mb-4">
+              {post.author.bio || 'No bio available.'}
+            </p>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/author/${post.author.id}`}>View Profile</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <BlogInteractions postId={post.id} />
     </MotionDiv>
   );
 }
-
-
-
-{/* <Card className="bg-muted/20">
-<CardHeader>
-  <CardTitle>About the Author</CardTitle>
-</CardHeader>
-<CardContent className="flex items-start gap-4">
-  <Avatar className="w-16 h-16">
-    <AvatarImage src={post.author.image || ''} alt={post.author.name || ''} />
-    <AvatarFallback className="text-xl">{post.author.name?.charAt(0) || 'U'}</AvatarFallback>
-  </Avatar>
-  <div>
-    <h3 className="font-medium text-lg">{post.author.name}</h3>
-    <p className="text-muted-foreground mb-4">
-      {post.author.bio || 'No bio available.'}
-    </p>
-    <Button asChild variant="outline" size="sm">
-      <Link href={`/author/${post.author.id}`}>View Profile</Link>
-    </Button>
-  </div>
-</CardContent>
-</Card> */}
