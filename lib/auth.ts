@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {
         try {
-          console.log('Google sign in attempt:', { email: user.email });
+          // console.log('Google sign in attempt:', { email: user.email });
 
           // Check if user exists
           const existingUser = await db.user.findUnique({
@@ -92,7 +92,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!existingUser) {
-            console.log('Creating new user for Google sign in:', { email: user.email });
+            // console.log('Creating new user for Google sign in:', { email: user.email });
             // Generate a random password for OAuth users
             const randomPassword = randomBytes(32).toString('hex');
 
