@@ -22,6 +22,8 @@ model User {
   posts     Post[]
   Comment   Comment[]
   Like      Like[]
+  notifications Notification[] @relation("UserNotifications")
+  sentNotifications Notification[] @relation("NotificationSender")
 }
 
 model Post {
@@ -40,6 +42,7 @@ model Post {
   views     Int       @default(0)
   Comment   Comment[]
   Like      Like[]
+  notifications Notification[]
 }
 
 model Comment {
@@ -53,6 +56,8 @@ model Comment {
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
+
+  notifications Notification[]
 }
 
 model Like {
@@ -66,6 +71,37 @@ model Like {
   userId String
 
   @@unique([postId, userId]) // Prevent multiple likes by the same user on a post
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      NotificationType
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Recipient of the notification
+  recipient   User   @relation("UserNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+
+  // Sender of the action (who liked, commented, etc.)
+  sender   User?  @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  senderId String?
+
+  // Related post
+  post   Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?
+
+  // Related comment (for comment replies)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String?
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
+  MENTION
 }
 
 // npx prisma generate this command is to generate the prisma client 

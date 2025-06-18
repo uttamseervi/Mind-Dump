@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { createNotification } from '../notifications/route';
 
 export async function GET(req: NextRequest) {
     try {
@@ -69,6 +70,23 @@ export async function POST(req: NextRequest) {
                 },
             },
         });
+
+        // Create notification for the post author
+        const post = await db.post.findUnique({
+            where: { id: postId },
+            include: { author: true },
+        });
+
+        if (post && post.authorId !== user.id) {
+            await createNotification({
+                type: 'COMMENT',
+                recipientId: post.authorId,
+                senderId: user.id,
+                postId: postId,
+                commentId: comment.id,
+                message: `${user.name || 'Someone'} commented on your post "${post.title}"`,
+            });
+        }
 
         return NextResponse.json(comment);
     } catch (error) {
