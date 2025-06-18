@@ -12,16 +12,60 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: 'Missing postId' }, { status: 400 });
         }
 
-        const likeCount = await db.like.count({
-            where: { postId },
-        });
+        const session = await getServerSession(authOptions);
+        const userEmail = session?.user?.email;
 
-        return NextResponse.json({ postId, likeCount });
+        // Get like count and users who liked
+        const [likeCount, likes] = await Promise.all([
+            db.like.count({
+                where: { postId },
+            }),
+            db.like.findMany({
+                where: { postId },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+            }),
+        ]);
+
+        // Check if current user has liked
+        let liked = false;
+        if (userEmail) {
+            const user = await db.user.findUnique({
+                where: { email: userEmail },
+            });
+            if (user) {
+                const userLike = await db.like.findUnique({
+                    where: {
+                        postId_userId: {
+                            postId,
+                            userId: user.id,
+                        },
+                    },
+                });
+                liked = !!userLike;
+            }
+        }
+
+        return NextResponse.json({
+            postId,
+            likeCount,
+            liked,
+            likes: likes.map(like => like.user)
+        });
     } catch (error) {
         console.error('Error fetching likes:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
 export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);

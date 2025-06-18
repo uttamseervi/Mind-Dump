@@ -20,13 +20,13 @@ export function BlogFeed() {
         const skip = (page - 1) * postsPerPage;
         const response = await fetch(`/api/posts?skip=${skip}&take=${postsPerPage}`);
         const data = await response.json();
-        
+
         if (page === 1) {
           setPosts(data.posts);
         } else {
           setPosts(prevPosts => [...prevPosts, ...data.posts]);
         }
-        
+
         setHasMore(data.posts.length === postsPerPage);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -48,12 +48,12 @@ export function BlogFeed() {
         >
           <h2 className="text-3xl font-bold mb-2">Latest Posts</h2>
           <p className="text-muted-foreground mb-10">Explore all our articles</p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts?.map((post) => (
               <BlogPostCard key={post.id} post={post} />
             ))}
-            
+
             {isLoading && page === 1 && (
               Array(postsPerPage).fill(0).map((_, index) => (
                 <div key={index} className="space-y-4">
@@ -65,11 +65,11 @@ export function BlogFeed() {
               ))
             )}
           </div>
-          
+
           {posts?.length > 0 && hasMore && (
             <div className="flex justify-center mt-12">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setPage(prevPage => prevPage + 1)}
                 disabled={isLoading}
               >
@@ -77,7 +77,7 @@ export function BlogFeed() {
               </Button>
             </div>
           )}
-          
+
           {posts?.length === 0 && !isLoading && (
             <p className="text-center text-muted-foreground">
               No posts found. Check back later or try a different filter.

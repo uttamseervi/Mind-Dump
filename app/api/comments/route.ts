@@ -60,11 +60,121 @@ export async function POST(req: NextRequest) {
                 content,
                 authorId: user.id,
             },
+            include: {
+                author: {
+                    select: {
+                        name: true,
+                        image: true,
+                    },
+                },
+            },
         });
 
         return NextResponse.json(comment);
     } catch (error) {
         console.error('Error creating comment:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const body = await req.json();
+        const { commentId, content } = body;
+
+        if (!commentId || !content) {
+            return NextResponse.json({ error: 'Missing commentId or content' }, { status: 400 });
+        }
+
+        const user = await db.user.findUnique({
+            where: { email: session.user.email },
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Check if comment exists and user owns it
+        const existingComment = await db.comment.findUnique({
+            where: { id: commentId },
+            include: { author: true },
+        });
+
+        if (!existingComment) {
+            return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+        }
+
+        if (existingComment.authorId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+        }
+
+        const updatedComment = await db.comment.update({
+            where: { id: commentId },
+            data: { content },
+            include: {
+                author: {
+                    select: {
+                        name: true,
+                        image: true,
+                    },
+                },
+            },
+        });
+
+        return NextResponse.json(updatedComment);
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const commentId = searchParams.get('commentId');
+
+        if (!commentId) {
+            return NextResponse.json({ error: 'Missing commentId' }, { status: 400 });
+        }
+
+        const user = await db.user.findUnique({
+            where: { email: session.user.email },
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Check if comment exists and user owns it
+        const existingComment = await db.comment.findUnique({
+            where: { id: commentId },
+        });
+
+        if (!existingComment) {
+            return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+        }
+
+        if (existingComment.authorId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+        }
+
+        await db.comment.delete({
+            where: { id: commentId },
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
