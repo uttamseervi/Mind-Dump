@@ -34,7 +34,7 @@ export default function RegisterPage() {
           </div>
           
         </div>
-        
+        {/* comment */}
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{' '}
           <a href="/login" className="text-primary hover:underline">
