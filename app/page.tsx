@@ -8,7 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 interface Interview {
   id: string;
   title: string;
-  content: string;
+  content?: string | null;
   description?: string | null;
   companyName?: string | null;
   difficulty?: string | null;
@@ -211,11 +211,12 @@ export default function Home() {
                     )}
                   </div>
                   
-                  {interview.description && (
-                    <p className="text-muted-foreground mb-4 line-clamp-2">
-                      {interview.description}
-                    </p>
-                  )}
+                  <p className="text-muted-foreground line-clamp-3">
+                    {interview.content 
+                      ? `${interview.content.substring(0, 200)}${interview.content.length > 200 ? '...' : ''}`
+                      : interview.description || 'No content available.'
+                    }
+                  </p>
                   
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">

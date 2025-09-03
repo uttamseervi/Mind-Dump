@@ -22,6 +22,6 @@ export default withAuth(
 export const config = {
     matcher: [
         '/dashboard/:path*',
-        '/api/posts/:path*',
+        // '/api/posts/:path*',
     ],
 };
