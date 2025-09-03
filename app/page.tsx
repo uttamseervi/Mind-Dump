@@ -8,11 +8,12 @@ import { formatDistanceToNow } from 'date-fns';
 interface Interview {
   id: string;
   title: string;
-  companyName: string;
-  role: string;
-  description?: string;
-  difficulty?: string;
-  category?: string;
+  content: string;
+  description?: string | null;
+  companyName?: string | null;
+  difficulty?: string | null;
+  category?: string | null;
+  slug: string;
   createdAt: string;
   author: {
     name: string | null;
@@ -36,22 +37,50 @@ export default function Home() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/featured-interviews');
+        setError(null);
+        
+        const response = await fetch('/api/featured-interviews', {
+          next: { revalidate: 60 } // Revalidate every 60 seconds
+        });
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch data');
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to fetch data');
         }
+        
         const data = await response.json();
-        setInterviews(data.interviews || []);
-        setCompanies(data.companies || []);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to load data. Please try again later.');
+        
+        if (!data.interviews || !data.companies) {
+          throw new Error('Invalid data received from server');
+        }
+        
+        setInterviews(data.interviews);
+        setCompanies(data.companies);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load data';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        
+        console.error('Error in fetchData:', {
+          error: errorMessage,
+          stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
+        });
+        
+        setError(errorMessage);
+        
+        // Set empty arrays to prevent UI errors
+        setInterviews([]);
+        setCompanies([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
+    
+    // Cleanup function
+    return () => {
+      // Any cleanup if needed
+    };
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -146,18 +175,25 @@ export default function Home() {
               key={interview.id}
               className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <Link href={`/interviews/${interview.id}`}>
+              <Link href={`/interviews/${interview.slug}`}>
                 <div className="p-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-xl font-bold mb-1">{interview.title}</h3>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                        {interview.companyName && (
+                          <>
+                            <span className="flex items-center gap-1">
+                              <Briefcase className="h-4 w-4" />
+                              {interview.companyName}
+                            </span>
+                            <span>•</span>
+                          </>
+                        )}
                         <span className="flex items-center gap-1">
-                          <Briefcase className="h-4 w-4" />
-                          {interview.role}
-                        </span>
-                        <span>•</span>
-                        <span>{interview.companyName}</span>
+                          <User className="h-4 w-4" />
+                          {interview.category || 'Interview'}
+                        </span> 
                       </div>
                     </div>
                     {interview.difficulty && (
