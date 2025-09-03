@@ -11,8 +11,9 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Modern Blog Platform',
-  description: 'A full-featured blog platform built with Next.js',
+  title: 'Interview Hub',
+  description: 'Share and explore real interview experiences from top companies. Learn from others and prepare for your next interview.',
+  keywords: ['interview experiences', 'company interviews', 'interview preparation', 'coding interviews', 'technical interviews'],
 };
 
 export default function RootLayout({
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className='dark'>
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider>

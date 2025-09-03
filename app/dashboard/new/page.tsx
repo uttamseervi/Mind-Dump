@@ -14,10 +14,21 @@ export default function NewPostPage() {
     try {
       setIsSubmitting(true);
 
-      const response = await axios.post('/api/posts', {
-        ...data,
-        published: !isDraft,
-      });
+      // Get the session to access the token
+      const { data: session } = await axios.get('/api/auth/session');
+      
+      const response = await axios.post('/api/posts', 
+        {
+          ...data,
+          published: !isDraft,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
 
       const post = response.data;
       router.push('/dashboard');

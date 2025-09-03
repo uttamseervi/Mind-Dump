@@ -130,7 +130,7 @@ export default function NotificationBell() {
 
     // Navigate to post
     const navigateToPost = (slug: string) => {
-        window.location.href = `/blog/${slug}`;
+        window.location.href = `/interviews/${slug}`;
     };
 
     useEffect(() => {

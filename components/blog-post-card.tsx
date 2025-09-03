@@ -26,7 +26,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <Link href={`/blog/${post.slug}`}>
+      <Link href={`/interviews/${post.slug}`}>
         <Card className="overflow-hidden h-full flex flex-col">
           <div className="relative h-5 w-full">
             {/* {post.image ? (
@@ -51,8 +51,20 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
           
           <CardContent className="pt-6 pb-3 flex-grow">
             <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+            <div className="flex items-center gap-2 mb-2">
+              {post.difficulty && (
+                <Badge variant={post.difficulty.toLowerCase() as any} className="text-xs">
+                  {post.difficulty}
+                </Badge>
+              )}
+              {post.companyName && (
+                <Badge variant="outline" className="text-xs">
+                  {post.companyName}
+                </Badge>
+              )}
+            </div>
             <p className="text-muted-foreground mb-4">
-              {post.content && truncateText(post.content.replace(/<[^>]*>/g, ''), 120)}
+              {post.description || (post.content && truncateText(post.content.replace(/<[^>]*>/g, ''), 120))}
             </p>
             <div className="flex flex-wrap gap-2">
               {post.tags && post.tags.slice(0, 3).map((tag: string) => (
@@ -66,9 +78,12 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               <div className="flex items-center gap-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={post.author?.image || ''} alt={post.author?.name || ''} />
-                  <AvatarFallback>{getInitials(post.author?.name)}</AvatarFallback>
+                  <AvatarFallback>{getInitials(post.author?.name || '')}</AvatarFallback>
                 </Avatar>
-                <span className="text-sm">{post.author?.name}</span>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">{post.author?.name || 'Anonymous'}</span>
+                  <span className="text-xs text-muted-foreground">{post.author?.role || 'User'}</span>
+                </div>
               </div>
               <div className="text-xs text-muted-foreground">
                 {post.createdAt && format(new Date(post.createdAt), 'MMM d, yyyy')} • {post.content && getReadingTime(post.content)} min read

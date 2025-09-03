@@ -44,7 +44,9 @@ export function Navbar() {
 
   const navItems = [
     { href: '/', label: 'Home' },
-    { href: '/blog', label: 'Blog' },
+    { href: '/interviews', label: 'Interviews' },
+    { href: '/companies', label: 'Companies' },
+    { href: '/prep-guides', label: 'Prep Guides' },
   ];
 
   return (
@@ -54,7 +56,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 text-xl font-bold">
             {/* <Pen className="h-6 w-6" />
             <span>BlogPlatform</span> */}
-            <MindDumpLogo />
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Interview Hub</span>
           </Link>
 
           <nav className="ml-8 hidden md:flex space-x-6">
@@ -76,6 +78,17 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
+          <Button
+            variant="default"
+            className="hidden md:flex items-center gap-1 font-bold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
+            asChild
+          >
+            <Link href="/dashboard/new">
+              <Pen className="h-4 w-4" />
+              Share Your Story
+            </Link>
+          </Button>
+
           {/* <Button
             variant="default"
             size="icon"

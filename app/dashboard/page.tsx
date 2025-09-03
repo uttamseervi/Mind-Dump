@@ -104,7 +104,7 @@ export default async function DashboardPage() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/blog/${post.slug}`}>View Post</Link>
+                      <Link href={`/interviews/${post.slug}`}>View Post</Link>
                     </Button>
                     <PostActions post={post} />
                   </CardFooter>

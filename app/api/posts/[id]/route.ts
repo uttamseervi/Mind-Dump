@@ -85,7 +85,16 @@ export async function PUT(
     }
     
     const body = await req.json();
-    const { title, content, image, category, tags, published } = body;
+    const { 
+      title, 
+      content, 
+      description, 
+      companyName, 
+      difficulty, 
+      category, 
+      tags, 
+      published 
+    } = body;
     
     if (!title || !content || !category) {
       return NextResponse.json(
@@ -98,7 +107,9 @@ export async function PUT(
     let updateData: any = {
       title,
       content,
-      image,
+      description,
+      companyName,
+      difficulty,
       category,
       tags: tags || [],
       published,

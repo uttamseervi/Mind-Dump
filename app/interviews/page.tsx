@@ -73,7 +73,7 @@ export default function BlogFeed() {
   });
 
   // Get unique tags from all posts
-  const allTags = Array.from(new Set(posts.flatMap(post => post.tags || [])));
+  const allTags = Array.from(new Set(posts?.flatMap(post => post.tags || [])));
 
   return (
     <section className="py-16">
@@ -88,36 +88,48 @@ export default function BlogFeed() {
 
           {/* Search and Filter Section */}
           <div className="mb-10 space-y-6">
-            <SearchSection
+            {/* <SearchSection
               onSearch={setSearchQuery}
               onCategorySelect={setSelectedCategory}
               selectedCategory={selectedCategory}
-            />
+            /> */}
 
-            {/* Tags Filter */}
-            {allTags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-3">Filter by Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {allTags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      className={`cursor-pointer ${selectedTag === tag ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
-                      onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {posts?.map((post) => (
-              <BlogPostCard key={post.id} post={post} />
+              <div className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md h-full flex flex-col">
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {post.category}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(post.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <h3 className="mb-3 text-xl font-semibold">{post.title}</h3>
+                  <div className="mb-4 flex-1">
+                    <p className="text-muted-foreground mb-2">
+                      {post.description || 'No description available'}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {post.tags?.map((tag: string) => (
+                        <span key={tag} className="text-xs bg-muted px-2 py-1 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => window.location.href = `/interviews/${post.slug}`}
+                    className="mt-auto w-full py-2 px-4 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
+                  >
+                    Read Full Experience →
+                  </button>
+                </div>
+              </div>
             ))}
-
             {isLoading && page === 1 && (
               Array(postsPerPage).fill(0).map((_, index) => (
                 <div key={index} className="space-y-4">

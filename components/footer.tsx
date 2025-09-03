@@ -17,7 +17,7 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary animate-pulse" />
               <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Mind Dump
+              Interview Hub
               </h2>
               <Sparkles className="w-5 h-5 text-primary animate-pulse" />
             </div>

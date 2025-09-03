@@ -14,11 +14,18 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   const [post, setPost] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/posts/${params.id}`);
-        // console.log("the post response is ", response)
+        const { data: session } = await fetch('/api/auth/session').then(res => res.json());
+        
+        const response = await fetch(`/api/posts/${params.id}`, {
+          headers: {
+            'Authorization': `Bearer ${session?.accessToken}`,
+          },
+        });
+        
         if (!response.ok) {
           throw new Error('Failed to fetch post');
         }
@@ -38,10 +45,13 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   const handleSubmit = async (data: any, isDraft: boolean) => {
     try {
       setIsSubmitting(true);
+      const { data: session } = await fetch('/api/auth/session').then(res => res.json());
+      
       const response = await fetch(`/api/posts/${params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.accessToken}`,
         },
         body: JSON.stringify({
           ...data,

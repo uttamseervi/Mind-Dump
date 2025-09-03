@@ -44,11 +44,12 @@ interface PostEditorProps {
 
 export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditorProps) {
   const [title, setTitle] = useState(defaultValues?.title || '');
-  const [image, setImage] = useState(defaultValues?.image || '');
+  const [description, setDescription] = useState(defaultValues?.description || '');
+  const [companyName, setCompanyName] = useState(defaultValues?.companyName || '');
+  const [difficulty, setDifficulty] = useState(defaultValues?.difficulty || 'MEDIUM');
   const [category, setCategory] = useState(defaultValues?.category || '');
   const [tags, setTags] = useState<string[]>(defaultValues?.tags || []);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-  // const [imageUrl, setImageUrl] = useState('');
   const [imageError, setImageError] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<any>(null);
@@ -70,6 +71,9 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
 
     onSubmit({
       title,
+      description,
+      companyName,
+      difficulty,
       content,
       category,
       tags,
@@ -86,32 +90,72 @@ export function PostEditor({ onSubmit, isSubmitting, defaultValues }: PostEditor
       className="space-y-8"
     >
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            placeholder="Enter your post title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="text-xl font-xs"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              placeholder="Enter your post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="text-base"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input
+              id="companyName"
+              placeholder="Enter company name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              className="text-base"
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="category">Role *</Label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger id="category">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="difficulty">Difficulty</Label>
+            <Select value={difficulty} onValueChange={setDifficulty}>
+              <SelectTrigger id="difficulty">
+                <SelectValue placeholder="Select difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="EASY">Easy</SelectItem>
+                <SelectItem value="MEDIUM">Medium</SelectItem>
+                <SelectItem value="HARD">Hard</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="description">Short Description</Label>
+          <textarea
+            id="description"
+            placeholder="Enter a short description of the interview experience"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            rows={3}
           />
         </div>
 
-        <div>
-          <Label htmlFor="category">Category</Label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger id="category">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value}>
-                  {cat.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
 
         <div>
           <Label htmlFor="tags">Tags</Label>

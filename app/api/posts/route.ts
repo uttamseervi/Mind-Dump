@@ -92,7 +92,16 @@ export async function POST(req: NextRequest) {
     }
     
     const body = await req.json();
-    const { title, content, image, category, tags, published } = body;
+    const { 
+      title, 
+      content, 
+      description, 
+      companyName, 
+      difficulty, 
+      category, 
+      tags, 
+      published 
+    } = body;
     
     if (!title || !content || !category) {
       return NextResponse.json(
@@ -119,7 +128,9 @@ export async function POST(req: NextRequest) {
         title,
         slug,
         content,
-        image,
+        description,
+        companyName,
+        difficulty,
         category,
         tags: tags || [],
         published,
