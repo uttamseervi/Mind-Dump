@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Search, Clock, Briefcase, User, BookOpen } from 'lucide-react';
@@ -211,12 +211,20 @@ export default function Home() {
                     )}
                   </div>
                   
-                  <p className="text-muted-foreground line-clamp-3">
-                    {interview.content 
-                      ? `${interview.content.substring(0, 200)}${interview.content.length > 200 ? '...' : ''}`
-                      : interview.description || 'No content available.'
-                    }
-                  </p>
+                  <div 
+                    className="text-muted-foreground line-clamp-3 prose prose-sm dark:prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: interview.content 
+                        ? interview.content.length > 200 
+                          ? `${interview.content.substring(0, 200)}...` 
+                          : interview.content
+                        : interview.description 
+                          ? interview.description.length > 200
+                            ? `${interview.description.substring(0, 200)}...`
+                            : interview.description
+                          : 'No content available.'
+                    }} 
+                  />
                   
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
