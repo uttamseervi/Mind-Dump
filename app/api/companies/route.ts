@@ -6,14 +6,14 @@ export async function GET() {
         // Get unique company names from posts
         const companies = await db.post.groupBy({
             by: ['companyName'],
-            where: {
-                AND: [
-                    { companyName: { not: null } },
-                    { companyName: { not: '' } }, // Exclude empty strings
-                    { companyName: { not: 'undefined' } }, // Exclude 'undefined' strings
-                ],
-                published: true, // Only include published posts
-            },
+            // where: {
+            //     AND: [
+            //         { companyName: { not: null } },
+            //         { companyName: { not: '' } }, // Exclude empty strings
+            //         { companyName: { not: 'undefined' } }, // Exclude 'undefined' strings
+            //     ],
+            //     published: true, // Only include published posts
+            // },
             _count: {
                 _all: true,
             },
